@@ -1,0 +1,175 @@
+{{ define "main" }}
+<div class="story-container">
+  {{ if .Params.showProgress }}
+  <div class="story-progress"></div>
+  {{ end }}
+  
+  <div class="story-media-wrapper">
+    {{ if or (hasPrefix .Params.mediaUrl ".mp4") (hasPrefix .Params.mediaUrl "video") (eq .Params.mediaType "video") }}
+      <video 
+        class="story-media story-video" 
+        autoplay 
+        muted 
+        loop 
+        playsinline
+      >
+        <source src="{{ .Params.mediaUrl }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    {{ else }}
+      <img 
+        src="{{ .Params.mediaUrl }}" 
+        alt="{{ .Title }}" 
+        class="story-media story-image"
+      />
+    {{ end }}
+
+    {{ if .Params.caption }}
+    <div class="story-caption">
+      {{ .Params.caption }}
+    </div>
+    {{ end }}
+
+    {{ if .Params.interactive }}
+    <div class="story-overlay"></div>
+    {{ end }}
+  </div>
+
+  {{ if .Params.interactive }}
+  <div class="story-nav">
+    <div class="story-nav-prev"></div>
+    <div class="story-nav-next"></div>
+  </div>
+  {{ end }}
+
+  {{ if .Content }}
+  <div class="story-content">
+    {{ .Content }}
+  </div>
+  {{ end }}
+</div>
+
+<style>
+.story-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  overflow: hidden;
+}
+
+.story-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: #fff;
+  animation: progress {{ .Params.duration }}s linear forwards;
+  z-index: 10;
+}
+
+@keyframes progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.story-media-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.story-media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.story-video {
+  background: #000;
+}
+
+.story-image {
+  background: #000;
+  animation: imageDisplay {{ .Params.duration }}s linear forwards;
+}
+
+@keyframes imageDisplay {
+  0%, 100% {
+    opacity: 1;
+  }
+}
+
+.story-caption {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  color: #fff;
+  font-size: 16px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  line-height: 1.4;
+}
+
+.story-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 8;
+}
+
+.story-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  pointer-events: none;
+  z-index: 9;
+}
+
+.story-nav-prev,
+.story-nav-next {
+  flex: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color 0.2s;
+}
+
+.story-nav-prev:hover,
+.story-nav-next:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.story-content {
+  padding: 20px;
+  background: #fff;
+  color: #000;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  .story-content {
+    background: #1a1a1a;
+    color: #fff;
+  }
+}
+</style>
+{{ end }}

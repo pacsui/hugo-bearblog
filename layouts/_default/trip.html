@@ -1,0 +1,245 @@
+{{ define "main" }}
+<div class="trip-container">
+  <div class="trip-header">
+    <h1>{{ .Title }}</h1>
+    {{ if .Params.description }}
+    <p class="trip-description">{{ .Params.description }}</p>
+    {{ end }}
+    {{ if .Params.location }}
+    <p class="trip-location">📍 {{ .Params.location }}</p>
+    {{ end }}
+  </div>
+
+  <div class="stories-gallery">
+    {{ $collectionTitle := .Title }}
+    {{ range (where .Site.RegularPages "Section" "stories").ByParam "order" }}
+      {{ if eq .Params.collection $collectionTitle }}
+      <div class="story-card">
+        <div class="story-card-media">
+          {{ if or (hasPrefix .Params.mediaUrl ".mp4") (hasPrefix .Params.mediaUrl "video") (eq .Params.mediaType "video") }}
+            <video class="story-preview" muted loop playsinline>
+              <source src="{{ .Params.mediaUrl }}" type="video/mp4">
+            </video>
+          {{ else }}
+            <img src="{{ .Params.mediaUrl }}" alt="{{ .Title }}" class="story-preview" />
+          {{ end }}
+          <a href="{{ .Permalink }}" class="story-card-link">
+            <div class="story-card-overlay">
+              <span class="story-card-play">▶</span>
+            </div>
+          </a>
+        </div>
+        <div class="story-card-info">
+          <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+          <p class="story-card-date">
+            <time datetime='{{ .Date.Format "2006-01-02" }}'>
+              {{ .Date.Format "Jan 2, 2006" }}
+            </time>
+          </p>
+          {{ if .Params.caption }}
+          <p class="story-card-caption">{{ .Params.caption }}</p>
+          {{ end }}
+        </div>
+      </div>
+      {{ end }}
+    {{ end }}
+  </div>
+
+  {{ if .Content }}
+  <div class="trip-content">
+    {{ .Content }}
+  </div>
+  {{ end }}
+</div>
+
+<style>
+.trip-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.trip-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.trip-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.5em;
+}
+
+.trip-description {
+  font-size: 1.1em;
+  color: #555;
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.trip-location {
+  font-size: 0.95em;
+  color: #888;
+  margin: 5px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .trip-description {
+    color: #aaa;
+  }
+  .trip-location {
+    color: #999;
+  }
+}
+
+.stories-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.story-card {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.story-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .story-card {
+    background: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  .story-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.story-card-media {
+  position: relative;
+  width: 100%;
+  padding-bottom: 133%;
+  overflow: hidden;
+  background: #000;
+}
+
+.story-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-card-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+}
+
+.story-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.story-card-link:hover .story-card-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.story-card-play {
+  color: #fff;
+  font-size: 2em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.story-card-link:hover .story-card-play {
+  opacity: 1;
+}
+
+.story-card-info {
+  padding: 15px;
+}
+
+.story-card-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+}
+
+.story-card-info h3 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.story-card-info h3 a:hover {
+  text-decoration: underline;
+}
+
+.story-card-date {
+  margin: 5px 0;
+  font-size: 0.85em;
+  color: #888;
+}
+
+@media (prefers-color-scheme: dark) {
+  .story-card-date {
+    color: #999;
+  }
+}
+
+.story-card-caption {
+  margin: 8px 0 0 0;
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.4;
+}
+
+@media (prefers-color-scheme: dark) {
+  .story-card-caption {
+    color: #aaa;
+  }
+}
+
+.trip-content {
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  .trip-content {
+    background: #2a2a2a;
+  }
+}
+
+@media (max-width: 768px) {
+  .trip-header h1 {
+    font-size: 1.8em;
+  }
+  .stories-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+  }
+}
+</style>
+{{ end }}

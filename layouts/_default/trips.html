@@ -1,0 +1,251 @@
+{{ define "main" }}
+<div class="trips-container">
+  <div class="trips-header">
+    <h1>Collections</h1>
+    <p class="trips-subtitle">Browse stories organized by collection</p>
+  </div>
+
+  {{ $tripMap := dict }}
+  {{ range (where .Site.RegularPages "Section" "stories") }}
+    {{ $col := .Params.collection }}
+    {{ if $col }}
+      {{ $existing := index $tripMap $col }}
+      {{ if $existing }}
+        {{ $tripMap = merge $tripMap (dict $col (append $existing .)) }}
+      {{ else }}
+        {{ $tripMap = merge $tripMap (dict $col (slice .)) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  <div class="trips-grid">
+    {{ range $collectionName, $stories := $tripMap }}
+    <div class="trip-item">
+      <div class="trip-item-header">
+        {{ $firstStory := index $stories 0 }}
+        {{ if $firstStory.Params.mediaUrl }}
+        <div class="trip-item-cover">
+          {{ if or (hasPrefix $firstStory.Params.mediaUrl ".mp4") (hasPrefix $firstStory.Params.mediaUrl "video") (eq $firstStory.Params.mediaType "video") }}
+            <video class="trip-cover-media" muted playsinline>
+              <source src="{{ $firstStory.Params.mediaUrl }}" type="video/mp4">
+            </video>
+          {{ else }}
+            <img src="{{ $firstStory.Params.mediaUrl }}" alt="{{ $collectionName }}" class="trip-cover-media" />
+          {{ end }}
+          <div class="trip-cover-overlay"></div>
+        </div>
+        {{ end }}
+        <div class="trip-item-info">
+          <h2>{{ $collectionName }}</h2>
+          <p class="trip-item-count">{{ len $stories }} {{ if eq (len $stories) 1 }}story{{ else }}stories{{ end }}</p>
+        </div>
+      </div>
+      
+      <div class="trip-item-preview">
+        <div class="trip-preview-grid">
+          {{ range first 4 $stories }}
+          <div class="trip-preview-item">
+            {{ if or (hasPrefix .Params.mediaUrl ".mp4") (hasPrefix .Params.mediaUrl "video") (eq .Params.mediaType "video") }}
+              <video class="trip-preview-media" muted playsinline>
+                <source src="{{ .Params.mediaUrl }}" type="video/mp4">
+              </video>
+            {{ else }}
+              <img src="{{ .Params.mediaUrl }}" alt="{{ .Title }}" class="trip-preview-media" />
+            {{ end }}
+          </div>
+          {{ end }}
+        </div>
+      </div>
+
+      <a href="#" class="trip-item-link" onclick="console.log('Navigate to collection'); return false;">
+        View All Stories →
+      </a>
+    </div>
+    {{ end }}
+  </div>
+</div>
+
+<style>
+.trips-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.trips-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.trips-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.5em;
+}
+
+.trips-subtitle {
+  color: #666;
+  font-size: 1.1em;
+  margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .trips-subtitle {
+    color: #aaa;
+  }
+}
+
+.trips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.trip-item {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.trip-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .trip-item {
+    background: #1a1a1a;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+  .trip-item:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.trip-item-header {
+  position: relative;
+  height: 200px;
+}
+
+.trip-item-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.trip-cover-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trip-cover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.6));
+}
+
+.trip-item-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  color: #fff;
+  z-index: 2;
+}
+
+.trip-item-info h2 {
+  margin: 0 0 5px 0;
+  font-size: 1.5em;
+}
+
+.trip-item-count {
+  margin: 0;
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
+.trip-item-preview {
+  padding: 15px;
+  background: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .trip-item-preview {
+    background: #0f0f0f;
+    border-top-color: #333;
+  }
+}
+
+.trip-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.trip-preview-item {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #000;
+}
+
+.trip-preview-media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trip-item-link {
+  display: block;
+  padding: 15px 20px;
+  background: #f5f5f5;
+  color: #333;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 500;
+  border-top: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.trip-item-link:hover {
+  background: #e8e8e8;
+}
+
+@media (prefers-color-scheme: dark) {
+  .trip-item-link {
+    background: #1a1a1a;
+    color: #fff;
+    border-top-color: #333;
+  }
+  .trip-item-link:hover {
+    background: #252525;
+  }
+}
+
+@media (max-width: 768px) {
+  .trips-header h1 {
+    font-size: 1.8em;
+  }
+  .trips-grid {
+    grid-template-columns: 1fr;
+  }
+  .trip-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+{{ end }}
