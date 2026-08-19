@@ -1,9 +1,9 @@
 {{ define "main" }}
 <div class="trip-container">
-  <div class="trip-header">
+  <div class="trip">
     <h1>{{ .Title }}</h1>
     {{ if .Params.description }}
-    <p class="trip-description">{{ .Params.description }}</p>
+    <p class="trip">{{ .Params.description }}</p>
     {{ end }}
     {{ if .Params.location }}
     <p class="trip-location">📍 {{ .Params.location }}</p>
