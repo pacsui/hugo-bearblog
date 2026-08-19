@@ -5,24 +5,18 @@
   {{ end }}
   
   <div class="story-media-wrapper">
-    {{ if or (hasPrefix .Params.mediaUrl ".mp4") (hasPrefix .Params.mediaUrl "video") (eq .Params.mediaType "video") }}
+    <div class="story-video-block">
       <video 
-        class="story-media story-video" 
-        autoplay 
+        class="story-media story-video"  
         muted 
         loop 
         playsinline
+        controls
       >
         <source src="{{ .Params.mediaUrl }}" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-    {{ else }}
-      <img 
-        src="{{ .Params.mediaUrl }}" 
-        alt="{{ .Title }}" 
-        class="story-media story-image"
-      />
-    {{ end }}
+    </div>
 
     {{ if .Params.caption }}
     <div class="story-caption">
@@ -88,6 +82,13 @@
   overflow: hidden;
 }
 
+.story-video-block {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+
 .story-media {
   width: 100%;
   height: 100%;
@@ -96,17 +97,6 @@
 
 .story-video {
   background: #000;
-}
-
-.story-image {
-  background: #000;
-  animation: imageDisplay {{ .Params.duration }}s linear forwards;
-}
-
-@keyframes imageDisplay {
-  0%, 100% {
-    opacity: 1;
-  }
 }
 
 .story-caption {
