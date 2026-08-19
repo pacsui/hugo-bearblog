@@ -16,18 +16,18 @@
       {{ if eq .Params.collection $collectionTitle }}
       <div class="story-card">
         <div class="story-card-media">
-          {{ if or (hasPrefix .Params.mediaUrl ".mp4") (hasPrefix .Params.mediaUrl "video") (eq .Params.mediaType "video") }}
-            <video class="story-preview" muted loop playsinline>
-              <source src="{{ .Params.mediaUrl }}" type="video/mp4">
-            </video>
-          {{ else }}
-            <img src="{{ .Params.mediaUrl }}" alt="{{ .Title }}" class="story-preview" />
-          {{ end }}
-          <a href="{{ .Permalink }}" class="story-card-link">
-            <div class="story-card-overlay">
-              <span class="story-card-play">▶</span>
-            </div>
-          </a>
+          <video 
+            class="story-media story-video story-preview"  
+            muted 
+            loop 
+            playsinline
+            controls
+            height="auto" 
+            width="100%"
+          >
+            <source src="{{ .Params.mediaUrl }}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
         </div>
         <div class="story-card-info">
           <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
@@ -136,44 +136,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.story-card-link {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  text-decoration: none;
-}
-
-.story-card-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
-}
-
-.story-card-link:hover .story-card-overlay {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.story-card-play {
-  color: #fff;
-  font-size: 2em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.story-card-link:hover .story-card-play {
-  opacity: 1;
 }
 
 .story-card-info {

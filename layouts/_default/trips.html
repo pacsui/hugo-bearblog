@@ -25,13 +25,18 @@
         {{ $firstStory := index $stories 0 }}
         {{ if $firstStory.Params.mediaUrl }}
         <div class="trip-item-cover">
-          {{ if or (hasPrefix $firstStory.Params.mediaUrl ".mp4") (hasPrefix $firstStory.Params.mediaUrl "video") (eq $firstStory.Params.mediaType "video") }}
-            <video class="trip-cover-media" muted playsinline>
-              <source src="{{ $firstStory.Params.mediaUrl }}" type="video/mp4">
-            </video>
-          {{ else }}
-            <img src="{{ $firstStory.Params.mediaUrl }}" alt="{{ $collectionName }}" class="trip-cover-media" />
-          {{ end }}
+          <video 
+            class="story-media story-video trip-cover-media"  
+            muted 
+            loop 
+            playsinline
+            controls
+            height="auto" 
+            width="100%"
+          >
+            <source src="{{ $firstStory.Params.mediaUrl }}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
           <div class="trip-cover-overlay"></div>
         </div>
         {{ end }}
@@ -45,13 +50,18 @@
         <div class="trip-preview-grid">
           {{ range first 4 $stories }}
           <div class="trip-preview-item">
-            {{ if or (hasPrefix .Params.mediaUrl ".mp4") (hasPrefix .Params.mediaUrl "video") (eq .Params.mediaType "video") }}
-              <video class="trip-preview-media" muted playsinline>
-                <source src="{{ .Params.mediaUrl }}" type="video/mp4">
-              </video>
-            {{ else }}
-              <img src="{{ .Params.mediaUrl }}" alt="{{ .Title }}" class="trip-preview-media" />
-            {{ end }}
+            <video 
+              class="story-media story-video trip-preview-media"  
+              muted 
+              loop 
+              playsinline
+              controls
+              height="auto" 
+              width="100%"
+            >
+              <source src="{{ .Params.mediaUrl }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
           </div>
           {{ end }}
         </div>
